@@ -93,9 +93,37 @@ describe('Test BlogPost CRUD functions', function () {
     });
   });
 
-  // describe('POST endpoint', function () {
+  describe('POST endpoint', function () {
+    it('Should return a new post, and should match what we send', function(){      
+      let newPost = fakePost();
+      return chai.request(app)
+        .post('/posts')
+        .send(newPost)
+        .then(function(res){
+          res.should.have.status(201);
+          res.body.should.be.an('object');
+          res.body.title.should.equal(newPost.title);
+          res.body.author.should.equal(`${newPost.author.firstName} ${newPost.author.lastName}`);
+          res.body.content.should.equal(newPost.content);
+          res.body.should.include.keys('title', 'author', 'content', 'created', 'id');
+          res.body.id.should.not.be.null;
+          newPost.id = res.body.id;
+          return BlogPost.findById(newPost.id)
+        })
+        .then(function(res){
+          console.log(res);
+          res.should.be.an('object');
+          res.title.should.equal(newPost.title);
+          res.author.firstName.should.equal(newPost.author.firstName);
+          res.author.lastName.should.equal(newPost.author.lastName); 
+          res.content.should.equal(newPost.content);
+          // res.should.contain.keys('title', 'author', 'content', 'created', '_id');
+          res._id.should.not.be.null;
 
-  // });
+        })
+    })
+
+  });
 
   // describe('PUT endpoint', function () {
 
