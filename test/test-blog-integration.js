@@ -81,8 +81,6 @@ describe('Test BlogPost CRUD functions', function () {
           return chai.request(app)
           .get(`/posts/${firstPost.id}`)
           .then (function (res) {
-            console.log(res.body);
-            console.log(firstPost);
             res.body.title.should.equal(firstPost.title);
             res.body.content.should.equal(firstPost.content);
             res.body.author.should.equal(firstPost.author);
@@ -111,7 +109,6 @@ describe('Test BlogPost CRUD functions', function () {
           return BlogPost.findById(newPost.id)
         })
         .then(function(res){
-          console.log(res);
           res.should.be.an('object');
           res.title.should.equal(newPost.title);
           res.author.firstName.should.equal(newPost.author.firstName);
@@ -119,15 +116,45 @@ describe('Test BlogPost CRUD functions', function () {
           res.content.should.equal(newPost.content);
           // res.should.contain.keys('title', 'author', 'content', 'created', '_id');
           res._id.should.not.be.null;
-
         })
     })
-
   });
 
-  // describe('PUT endpoint', function () {
-
-  // });
+  describe('PUT endpoint', function () {
+    it('should change the appropriate post', function () {
+      let putData = {
+        title: 'buhbuhblah',
+        content: 'ipsumlorem',
+        author: {
+          firstName: 'No',
+          lastName: 'Name'
+        }
+      }
+      let firstData;
+      return chai.request(app)
+        .get('/posts')
+        .then(function(res) {
+          putData.id = res.body[0].id;
+          firstData = res.body[0];
+          return chai.request(app)
+            .put(`/posts/${res.body[0].id}`)
+            .send(putData)
+            .then(function(res) {
+              console.log(res.body);
+              console.log(putData);
+              console.log(firstData);
+              res.should.have.status(201);
+              res.should.be.json;
+              res.body.should.be.an('object');
+              res.body.title.should.equal(putData.title);
+              res.body.content.should.equal(putData.content);
+              res.body.author.should.equal(`${putData.author.firstName} ${putData.author.lastName}`);
+              res.body.id.should.equal(firstData.id);
+              res.body.created.should.equal(firstData.created);
+            });
+        });
+    });
+  });
   // describe('DELETE endpoint', function () {
 
   // });
