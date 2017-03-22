@@ -21,7 +21,7 @@ function fakePost(){
 
  } 
 }
-function seedDatabase(){
+function seedBlogData(){
   let fakeData = [];
   for(var i = 0; i<10; i++){
     fakeData.push(fakePost());
@@ -34,8 +34,35 @@ function tearDownDB(){
   return mongoose.connection.dropDatabase(); 
 }
 describe('Test BlogPost CRUD functions', ()=>{
-  before(()=>{
-    return runServer(TEST_DATABASE_URL)
-  })
-  
+  before(() => {
+    return runServer(TEST_DATABASE_URL);
+  });
+
+  beforeEach(() => {
+    return seedBlogData();
+  });
+
+  afterEach(() => {
+    return tearDownDB();
+  });
+
+  after(() => {
+    return closeServer();
+  });
+
+  describe('GET enpoint', () =>{
+
+  });
+
+  describe('POST enpoint', () =>{
+
+  });
+
+  describe('PUT enpoint', () =>{
+
+  });
+  describe('DELETE enpoint', () =>{
+
+  });
+
 })
