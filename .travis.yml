@@ -4,6 +4,6 @@ deploy:
   provider: heroku
   api_key:
     secure: LiLCkC91FWOYZB22y8LxssNowqQR4rHWwgIxefDBbneW6AUSuWcyoH0BmSF8WGBuMgEFd+uOapIpO1Xt44cX3imBDAohqcVcTbt5rQr4GOKIHySAKSa4OgJrQdu3z5SVj6fFL4mZmBFJE9oHBN1BEdK5bKK7jg9wD/NeVyMEvxMtS6kjyB+1bifVp+DuyHVqeMI1hc8RFvsU9qY7Br9toABxIgYn7ixa9yBvFEKhdWUFd8j5xKQVogltWOiHhXjyS0+cz/Kn6OlJqCYE1lgtraN4o4qd9wbewQ+5voMN7dtR4d/sjKLrZa0ijydDHPyiPupeWbJiiZ0M8U5yy0XVJ5yYVFUFoO2huJx1jBoOvMDLORG9MotoUlj2AAFVPg+ki97CSWCuZbmM/Y0M4sJudOTwr6r6et9qvwL3TifE/5KZnkfMle/5ixk2CRZV++D4PyBw5ZruteuXL2R/zyliHK6iXKafc54mZxvsm7xw2yHn8EwjOzeczCVVC4uWSbcDH7OFM1lxvJww+IAQlSo0PgsF+3oL6/0Jxn1Zc6jGNUK8cxJiH83dBlVQMH8v8yUHVKnijG79IsasB+tqXrjJSukle2grrEjzaD0fuYed2ctK+YHu/VN+/V4Dcql8ae4RFF0H8nbJV6ym7Ki2kIfK/vdaXBH1+Aeni1iFVZ+Qde8=
-  app: blog-app-mongoose-challenge-solution
+  app: gentle-wave-70580
   on:
     repo: wshuang6/blog-app-mongoose-challenge-solution
