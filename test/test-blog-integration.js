@@ -169,10 +169,7 @@ describe('Test BlogPost CRUD functions', function () {
             console.log(res);
             should.not.exist(res);
           })
-
         })
     })
-
   });
-
 })
