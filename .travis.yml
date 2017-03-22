@@ -2,7 +2,8 @@ language: node_js
 node_js: node
 deploy:
   provider: heroku
-  api_key: ''
+  api_key:
+    secure: WaHoHkWgxVyX7r5Pah7iKObksEicNnT2CVf5WCL7dRvBz0+SD/Xv40bUblhNMqGME/n9Sy3NYuIE6tgRYmHOeIpPyZ2FAYKkYffi074hkJlABNbFUdfTZmxEo+Biu4cziBTtxRbSMA4MgIDxJT7jQE8FH/aLk6fJ0nZlC25lvIj2LtFQ3NVEwfQJDL+qp0+AqiKuGWLRGpj09/+o27qOqTFcjBTWmeMXb58aCC7VLKicAoSmwONwdOIjh+U6taluKvJ7oGJD6IMV7gw1ravVayb2dd8Bqqw9/DTXRTspdEkHjK1encIJvSUwMISpdaMzfaGK97gFtuv4VirP6sXTcVcR9xOFohL3g+KclcIRNGjLja0FH0DQW/btLSp6R502mjChkRJ/1VJuijc/5H9CF700UHWHrP7iDEkkj+39scyQbNHtbe6E6d9QGq0pvGU+b4EACTBoGB4qOTFL9hZ1umBn/Vt9L62GfDE4Cuf+xqz4XvbkZKYHJACW9oGuezAh7dVDes4aHkAd+sF6u0b7xM3J82kGbCAdFTnbpYvwWV3nWHMMg0CX9mhxzlO269RA5V15GYxJGroYtifjvIAyJMLoosDHy5dpmKj4XPsyz15ci7cq6rkx126XbFt2p4A5piIhBloGXKDs/FfuUAagwBTRUoHqPwhsFfig4/hWh5M=
   app: arcane-reaches-72868
   on:
     repo: wshuang6/blog-app-mongoose-challenge-solution
