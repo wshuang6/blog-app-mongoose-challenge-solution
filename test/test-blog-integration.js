@@ -140,9 +140,6 @@ describe('Test BlogPost CRUD functions', function () {
             .put(`/posts/${res.body[0].id}`)
             .send(putData)
             .then(function(res) {
-              console.log(res.body);
-              console.log(putData);
-              console.log(firstData);
               res.should.have.status(201);
               res.should.be.json;
               res.body.should.be.an('object');
@@ -155,8 +152,27 @@ describe('Test BlogPost CRUD functions', function () {
         });
     });
   });
-  // describe('DELETE endpoint', function () {
+  describe('DELETE endpoint', function () {
+    it('should delete specified Blogpost', function(){
+      let postId;
+      return chai.request(app)
+        .get('/posts')
+        .then(function(res){
+          postId = res.body[0].id;
+          console.log(postId);
+          return chai.request(app).delete(`/posts/${postId}`)
+          .then(function(res) {
+            res.should.have.status(204);
+            return BlogPost.findById(postId).exec();
+          })
+          .then(function(res){
+            console.log(res);
+            should.not.exist(res);
+          })
 
-  // });
+        })
+    })
+
+  });
 
 })
