@@ -8,11 +8,14 @@ const {BlogPost} = require('./models');
 
 const app = express();
 
+const {userRouter} = require('./Users');
+
 app.use(morgan('common'));
 app.use(bodyParser.json());
 
 mongoose.Promise = global.Promise;
 
+app.use('/users', userRouter);
 
 app.get('/posts', (req, res) => {
   BlogPost

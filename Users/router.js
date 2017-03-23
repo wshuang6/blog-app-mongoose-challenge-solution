@@ -75,3 +75,20 @@ router.post('/', (req, res) => {
     });
 });
 
+router.get('/', (req, res) => {
+  return User
+    .find({})
+    .exec()
+    .then(userz => {
+      return res.status(200).json(userz);
+    })
+    .catch(error => {
+      return res.status(500).json({message: 'only god can help you now'});
+    });
+});
+
+router.get('/me', passport.authenticate('basic', {'session': false}), (req, res) => {
+  console.log(req.user);
+  return res.json({user: req.user.apiRepr()});
+})
+module.exports = {router};
