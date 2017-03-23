@@ -19,7 +19,7 @@ UserSchema.methods.apiRepr = function () {
 }
 
 UserSchema.methods.validatePassword = function (password) {
-  return bcrypt.method.compare(password, this.password);
+  return bcrypt.compare(password, this.password);
 }
 
 UserSchema.statics.hashPassword = function(password) {

@@ -88,7 +88,6 @@ router.get('/', (req, res) => {
 });
 
 router.get('/me', passport.authenticate('basic', {'session': false}), (req, res) => {
-  console.log(req.user);
   return res.json({user: req.user.apiRepr()});
 })
-module.exports = {router};
+module.exports = {router, basicStrategy};

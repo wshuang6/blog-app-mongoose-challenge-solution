@@ -2,10 +2,13 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const passport = require('passport');
+// const {BasicStrategy} = require('passport-http');
 
 const {DATABASE_URL, PORT} = require('./config');
 const {BlogPost} = require('./models');
 
+const {basicStrategy} = require('./Users');
 const app = express();
 
 const {userRouter} = require('./Users');
@@ -14,6 +17,9 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 
 mongoose.Promise = global.Promise;
+
+passport.use(basicStrategy);
+app.use(passport.initialize());
 
 app.use('/users', userRouter);
 
@@ -41,7 +47,8 @@ app.get('/posts/:id', (req, res) => {
     });
 });
 
-app.post('/posts', (req, res) => {
+app.post('/posts', passport.authenticate('basic', {'session': false}), (req, res) => {
+  console.log(user);
   const requiredFields = ['title', 'content', 'author'];
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
@@ -67,7 +74,7 @@ app.post('/posts', (req, res) => {
 });
 
 
-app.delete('/posts/:id', (req, res) => {
+app.delete('/posts/:id', passport.authenticate('basic', {'session': false}), (req, res) => {
   BlogPost
     .findByIdAndRemove(req.params.id)
     .exec()
@@ -81,7 +88,7 @@ app.delete('/posts/:id', (req, res) => {
 });
 
 
-app.put('/posts/:id', (req, res) => {
+app.put('/posts/:id', passport.authenticate('basic', {'session': false}), (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
     res.status(400).json({
       error: 'Request path id and request body id values must match'
@@ -104,7 +111,7 @@ app.put('/posts/:id', (req, res) => {
 });
 
 
-app.delete('/:id', (req, res) => {
+app.delete('/:id', passport.authenticate('basic', {'session': false}), (req, res) => {
   BlogPosts
     .findByIdAndRemove(req.params.id)
     .exec()
