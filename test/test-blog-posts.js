@@ -269,3 +269,54 @@ describe('blog posts API resource', function() {
     });
   });
 });
+
+describe('users API', function () {
+  const NEWUSER = {
+    username: faker.company.catchPhrase(),
+    firstName: faker.finance.currencyName(),
+    lastName: faker.commerce.productName(),
+    password: faker.company.bs()
+  }
+  function sendUser (user) {
+    console.log(user);
+    return user;
+  }
+  before(function() {
+    return runServer(TEST_DATABASE_URL);
+  });
+
+  afterEach(function() {
+    // tear down database so we ensure no state from this test
+    // effects any coming after.
+    return tearDownDb();
+  });
+
+  after(function() {
+    return closeServer();
+  });
+
+  describe('POST endpoint', function() {
+    it('should correctly post user information', function () {
+      return chai.request(app)
+        .post('/users')
+        .send(sendUser(NEWUSER))
+        .then(function (res) {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.should.be.an('object');
+          res.body.should.have.keys('username', 'firstName', 'lastName');
+          res.body.username.should.equal(NEWUSER.username);
+          res.body.firstName.should.equal(NEWUSER.firstName);
+          res.body.lastName.should.equal(NEWUSER.lastName);
+          return chai.request(app).get('/users')
+        })
+        .then(function (res) {
+          console.log(res.body);
+          res.body[0].username.should.equal(NEWUSER.username);
+          res.body[0].firstName.should.equal(NEWUSER.firstName);
+          res.body[0].lastName.should.equal(NEWUSER.lastName);
+          res.body[0].password.should.be.a('string');
+        })
+    })
+  })
+})
