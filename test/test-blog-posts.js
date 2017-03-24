@@ -144,63 +144,69 @@ describe('blog posts API resource', function() {
   });
 
   describe('POST endpoint', function() {
+    const newPost = {
+      title: faker.lorem.sentence(),
+      author: {
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+      },
+      content: faker.lorem.text()
+    };
     // strategy: make a POST request with data,
     // then prove that the post we get back has
     // right keys, and that `id` is there (which means
     // the data was inserted into db)
     it('should add a new blog post', function() {
-
-      const newPost = {
-          title: faker.lorem.sentence(),
-          author: {
-            firstName: faker.name.firstName(),
-            lastName: faker.name.lastName(),
-          },
-          content: faker.lorem.text()
-      };
-
       return chai.request(app)
         .post('/posts')
-        .auth('xav3x', '12345678')
+        .auth('xav3x', '123456')
         .send(newPost)
-        // .then(function(res) {
-        //   console.log('oo    --->    oo');
-        //   res.should.have.status(201);
-        //   res.should.be.json;
-        //   res.body.should.be.a('object');
-        //   res.body.should.include.keys(
-        //     'id', 'title', 'content', 'author', 'created');
-        //   res.body.title.should.equal(newPost.title);
-        //   // cause Mongo should have created id on insertion
-        //   res.body.id.should.not.be.null;
-        //   res.body.author.should.equal(
-        //     `${newPost.author.firstName} ${newPost.author.lastName}`);
-        //   res.body.content.should.equal(newPost.content);
-        //   return BlogPost.findById(res.body.id).exec();
-        // })
-        // .then(function(post) {
-        //   post.title.should.equal(newPost.title);
-        //   post.content.should.equal(newPost.content);
-        //   post.author.firstName.should.equal(newPost.author.firstName);
-        //   post.author.lastName.should.equal(newPost.author.lastName);
-        // })
+        .then(function(res) {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.should.be.a('object');
+          res.body.should.include.keys(
+            'id', 'title', 'content', 'author', 'created');
+          res.body.title.should.equal(newPost.title);
+          // cause Mongo should have created id on insertion
+          res.body.id.should.not.be.null;
+          res.body.author.should.equal(
+            `${newPost.author.firstName} ${newPost.author.lastName}`);
+          res.body.content.should.equal(newPost.content);
+          return BlogPost.findById(res.body.id).exec();
+        })
+        .then(function(post) {
+          post.title.should.equal(newPost.title);
+          post.content.should.equal(newPost.content);
+          post.author.firstName.should.equal(newPost.author.firstName);
+          post.author.lastName.should.equal(newPost.author.lastName);
+        })
+    });
+    it ('should have unauthorized error if wrong password', function () {
+      return chai.request(app)
+        .post('/posts')
+        .auth('xav3x', 'WRONGPASS')
+        .send(newPost)
         .catch(function(err){
           err.should.have.status(401);
           err.response.unauthorized.should.equal(true);
           err.response.error.text.should.equal('Unauthorized');
         });
-
+    });
+    it ('should have unauthorized error if wrong user', function () {
+      return chai.request(app)
+        .post('/posts')
+        .auth('wronguser', '123456')
+        .send(newPost)
+        .catch(function(err){
+          err.should.have.status(401);
+          err.response.unauthorized.should.equal(true);
+          err.response.error.text.should.equal('Unauthorized');
+        });
     });
   });
 
   describe('PUT endpoint', function() {
-
-    // strategy:
-    //  1. Get an existing post from db
-    //  2. Make a PUT request to update that post
-    //  3. Prove post returned by request contains data we sent
-    //  4. Prove post in db is correctly updated
-    it('should update fields you send over', function() {
       const updateData = {
         title: 'cats cats cats',
         content: 'dogs dogs dogs',
@@ -208,7 +214,14 @@ describe('blog posts API resource', function() {
           firstName: 'foo',
           lastName: 'bar'
         }
-      };
+      };    
+    // strategy:
+    //  1. Get an existing post from db
+    //  2. Make a PUT request to update that post
+    //  3. Prove post returned by request contains data we sent
+    //  4. Prove post in db is correctly updated
+    it('should update fields you send over', function() {
+
 
       return BlogPost
         .findOne()
@@ -238,6 +251,40 @@ describe('blog posts API resource', function() {
           post.author.firstName.should.equal(updateData.author.firstName);
           post.author.lastName.should.equal(updateData.author.lastName);
         });
+    });
+    it ('should have unauthorized error if wrong password', function () {
+      return BlogPost
+        .findOne()
+        .exec()
+        .then(post => {
+          updateData.id = post.id;
+          return chai.request(app)
+            .put(`/posts/${post.id}`)
+            .auth('xav3x', 'WRONGPASS')
+            .send(updateData)
+            .catch(function(err){
+              err.should.have.status(401);
+              err.response.unauthorized.should.equal(true);
+              err.response.error.text.should.equal('Unauthorized');
+            });
+        })
+    });
+    it ('should have unauthorized error if wrong user', function () {
+      return BlogPost
+        .findOne()
+        .exec()
+        .then(post => {
+          updateData.id = post.id;
+          return chai.request(app)
+            .put(`/posts/${post.id}`)
+            .auth('WRONGUSER', '123456')
+            .send(updateData)
+            .catch(function(err){
+              err.should.have.status(401);
+              err.response.unauthorized.should.equal(true);
+              err.response.error.text.should.equal('Unauthorized');
+            });
+        })
     });
   });
 
@@ -269,6 +316,36 @@ describe('blog posts API resource', function() {
           // an error. `should.be.null(_post)` is how we can
           // make assertions about a null value.
           should.not.exist(_post);
+        });
+    });
+    it('should not delete a post given wrong password', function() {
+      let post;
+      return BlogPost
+        .findOne()
+        .exec()
+        .then(_post => {
+          post = _post;
+          return chai.request(app).delete(`/posts/${post.id}`).auth('xav3x', '12!!xzciha56');
+        })
+        .catch(function(err){
+          err.should.have.status(401);
+          err.response.unauthorized.should.equal(true);
+          err.response.error.text.should.equal('Unauthorized');
+        });
+    });
+    it('should not delete a post given wrong username', function() {
+      let post;
+      return BlogPost
+        .findOne()
+        .exec()
+        .then(_post => {
+          post = _post;
+          return chai.request(app).delete(`/posts/${post.id}`).auth('OASJD', '123456');
+        })
+        .catch(function(err){
+          err.should.have.status(401);
+          err.response.unauthorized.should.equal(true);
+          err.response.error.text.should.equal('Unauthorized');
         });
     });
   });
@@ -323,6 +400,3 @@ describe('users API', function () {
     })
   })
 })
-
-//test can not access if provided credentials that don't exist
-//post put delete  should get 401 on access without correct crednetials

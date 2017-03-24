@@ -26,7 +26,10 @@ const basicStrategy = new BasicStrategy((username, password, callback) => {
         return callback(null, false, {message: "Incorrect password"}); 
       }
       return callback(null, user);
-  });
+    })
+    .catch(err => {
+      console.error("Password verification failed in Users/router.js");
+    })
 });
 
 passport.use(basicStrategy);
