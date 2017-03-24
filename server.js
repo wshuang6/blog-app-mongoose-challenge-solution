@@ -48,7 +48,7 @@ app.get('/posts/:id', (req, res) => {
 });
 
 app.post('/posts', passport.authenticate('basic', {'session': false}), (req, res) => {
-  const requiredFields = ['title', 'content', 'author'];
+  const requiredFields = ['title', 'content'];
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -62,14 +62,13 @@ app.post('/posts', passport.authenticate('basic', {'session': false}), (req, res
     .create({
       title: req.body.title,
       content: req.body.content,
-      author: req.body.author
+      author: {firstName: req.user.firstName, lastName: req.user.lastName} || req.body.author
     })
     .then(blogPost => res.status(201).json(blogPost.apiRepr()))
     .catch(err => {
         console.error(err);
         res.status(500).json({error: 'Something went wrong'});
     });
-
 });
 
 
