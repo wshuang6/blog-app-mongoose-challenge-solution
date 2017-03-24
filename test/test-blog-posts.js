@@ -278,7 +278,6 @@ describe('users API', function () {
     password: faker.company.bs()
   }
   function sendUser (user) {
-    console.log(user);
     return user;
   }
   before(function() {
@@ -311,11 +310,11 @@ describe('users API', function () {
           return chai.request(app).get('/users')
         })
         .then(function (res) {
-          console.log(res.body);
           res.body[0].username.should.equal(NEWUSER.username);
           res.body[0].firstName.should.equal(NEWUSER.firstName);
           res.body[0].lastName.should.equal(NEWUSER.lastName);
           res.body[0].password.should.be.a('string');
+          res.body[0].password.should.not.equal(NEWUSER.password);
         })
     })
   })
