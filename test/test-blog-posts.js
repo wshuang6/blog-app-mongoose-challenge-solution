@@ -67,12 +67,10 @@ describe('blog posts API resource', function() {
   });
 
   beforeEach(function() {
-    console.log('seeding .. > Userdata')
     return seedUser();
   });
 
   beforeEach(function() {
-    console.log('seeding .. > BlogPostdata')
     return seedBlogPostData();
   });
 
@@ -163,29 +161,35 @@ describe('blog posts API resource', function() {
 
       return chai.request(app)
         .post('/posts')
-        .auth('xav3x', '123456')
+        .auth('xav3x', '12345678')
         .send(newPost)
-        .then(function(res) {
-          console.log('oo    --->    oo');
-          res.should.have.status(201);
-          res.should.be.json;
-          res.body.should.be.a('object');
-          res.body.should.include.keys(
-            'id', 'title', 'content', 'author', 'created');
-          res.body.title.should.equal(newPost.title);
-          // cause Mongo should have created id on insertion
-          res.body.id.should.not.be.null;
-          res.body.author.should.equal(
-            `${newPost.author.firstName} ${newPost.author.lastName}`);
-          res.body.content.should.equal(newPost.content);
-          return BlogPost.findById(res.body.id).exec();
-        })
-        .then(function(post) {
-          post.title.should.equal(newPost.title);
-          post.content.should.equal(newPost.content);
-          post.author.firstName.should.equal(newPost.author.firstName);
-          post.author.lastName.should.equal(newPost.author.lastName);
+        // .then(function(res) {
+        //   console.log('oo    --->    oo');
+        //   res.should.have.status(201);
+        //   res.should.be.json;
+        //   res.body.should.be.a('object');
+        //   res.body.should.include.keys(
+        //     'id', 'title', 'content', 'author', 'created');
+        //   res.body.title.should.equal(newPost.title);
+        //   // cause Mongo should have created id on insertion
+        //   res.body.id.should.not.be.null;
+        //   res.body.author.should.equal(
+        //     `${newPost.author.firstName} ${newPost.author.lastName}`);
+        //   res.body.content.should.equal(newPost.content);
+        //   return BlogPost.findById(res.body.id).exec();
+        // })
+        // .then(function(post) {
+        //   post.title.should.equal(newPost.title);
+        //   post.content.should.equal(newPost.content);
+        //   post.author.firstName.should.equal(newPost.author.firstName);
+        //   post.author.lastName.should.equal(newPost.author.lastName);
+        // })
+        .catch(function(err){
+          err.should.have.status(401);
+          err.response.unauthorized.should.equal(true);
+          err.response.error.text.should.equal('Unauthorized');
         });
+
     });
   });
 
@@ -319,3 +323,6 @@ describe('users API', function () {
     })
   })
 })
+
+//test can not access if provided credentials that don't exist
+//post put delete  should get 401 on access without correct crednetials
