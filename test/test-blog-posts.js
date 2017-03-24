@@ -9,6 +9,7 @@ const should = chai.should();
 
 const {DATABASE_URL} = require('../config');
 const {BlogPost} = require('../models');
+const {User,  basicStrategy} = require('../Users');
 const {closeServer, runServer, app} = require('../server');
 const {TEST_DATABASE_URL} = require('../config');
 
@@ -50,6 +51,14 @@ function seedBlogPostData() {
   return BlogPost.insertMany(seedData);
 }
 
+function seedUser() {
+  return User.create({
+    "firstName": faker.name.firstName(),
+    "lastName": faker.name.lastName(),
+    "username": 'xav3x',
+    "password": "$2a$10$KlEiLt91w38IgLjWCsX/FuVko01ekMBXiA6celeefbZFSCFLjfw8G"
+  });
+}
 
 describe('blog posts API resource', function() {
 
@@ -58,6 +67,12 @@ describe('blog posts API resource', function() {
   });
 
   beforeEach(function() {
+    console.log('seeding .. > Userdata')
+    return seedUser();
+  });
+
+  beforeEach(function() {
+    console.log('seeding .. > BlogPostdata')
     return seedBlogPostData();
   });
 
@@ -148,8 +163,10 @@ describe('blog posts API resource', function() {
 
       return chai.request(app)
         .post('/posts')
+        .auth('xav3x', '123456')
         .send(newPost)
         .then(function(res) {
+          console.log('oo    --->    oo');
           res.should.have.status(201);
           res.should.be.json;
           res.body.should.be.a('object');
@@ -197,6 +214,7 @@ describe('blog posts API resource', function() {
 
           return chai.request(app)
             .put(`/posts/${post.id}`)
+            .auth('xav3x', '123456')
             .send(updateData);
         })
         .then(res => {
@@ -234,7 +252,8 @@ describe('blog posts API resource', function() {
         .exec()
         .then(_post => {
           post = _post;
-          return chai.request(app).delete(`/posts/${post.id}`);
+          
+          return chai.request(app).delete(`/posts/${post.id}`).auth('xav3x', '123456');
         })
         .then(res => {
           res.should.have.status(204);

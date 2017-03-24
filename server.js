@@ -48,7 +48,6 @@ app.get('/posts/:id', (req, res) => {
 });
 
 app.post('/posts', passport.authenticate('basic', {'session': false}), (req, res) => {
-  console.log(user);
   const requiredFields = ['title', 'content', 'author'];
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
